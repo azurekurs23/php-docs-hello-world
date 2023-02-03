@@ -42,10 +42,6 @@ $daten = array (
 $connectionInfo = array("UID" => "rse", "pwd" => 'Pa$$w0rd1234', "Database" => "ibrot", "LoginTimeout" => 30, "Encrypt" => 1, "TrustServerCertificate" => 0);
 $serverName = "tcp:xxx-ibrot-dbsrv.database.windows.net,1433";
 $conn = sqlsrv_connect($serverName, $connectionInfo);
-{  
-     echo "Could not connect.\n";  
-     die( print_r( sqlsrv_errors(), true));  
-}  
 
 /* Set up and execute the query. */  
 $tsql = "SELECT * FROM Bestellposition WHERE BestellungID=$bnr";  
