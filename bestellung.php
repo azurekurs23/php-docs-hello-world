@@ -30,12 +30,31 @@ $bnr = $_GET["bnr"];
 echo "<h1>iBrot-Bestellung</h1>"; 
 echo "<h2>Bestellnummer: $bnr </h2>"; 
 
-/* Daten in einem assoziativen Array definieren*/
+/* Daten in einem assoziativen Array definieren
 $daten = array ( 
  array("Position"=>1,"ArtikelID"=>"Brötchen","Menge"=>5), 
  array("Position"=>2,"ArtikelID"=>"Croissant","Menge"=>3), 
  array("Position"=>3,"ArtikelID"=>"Brot","Menge"=>1) 
  ); 
+*/
+
+// SQL Server Extension Sample Code:
+$connectionInfo = array("UID" => "rse", "pwd" => 'Pa$$w0rd', "Database" => "ibrot", "LoginTimeout" => 30, "Encrypt" => 1, "TrustServerCertificate" => 0);
+$serverName = "tcp:xxx-ibrot-dbsrv.database.windows.net,1433";
+$conn = sqlsrv_connect($serverName, $connectionInfo);
+{  
+     echo "Could not connect.\n";  
+     die( print_r( sqlsrv_errors(), true));  
+}  
+
+/* Set up and execute the query. */  
+$tsql = "SELECT * FROM Bestellposition WHERE BestellungID=$bnr";  
+$stmt = sqlsrv_query( $conn, $tsql);  
+if( $stmt === false)  
+{  
+     echo "Error in query preparation/execution.\n";  
+     die( print_r( sqlsrv_errors(), true));  
+}  
 
 /* Überschriften im Tabellen-Head ausgeben */
 echo "<table>"; 
@@ -49,8 +68,13 @@ echo "</thead>";
 
 /* Datensätze im Tabellen-Body ausgeben */
 echo "<tbody>"; 
-foreach ($daten as $row) { 
- echo "<tr>"; 
+
+/*foreach ($daten as $row) { */
+
+/* Retrieve each row as an associative array and display the results.*/  
+while( $row = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC))  
+{  
+  echo "<tr>"; 
  echo "<td>".$row['Position']."</td>"; 
  echo "<td>".$row['ArtikelID']."</td>"; 
  echo "<td>".$row['Menge']."</td>"; 
@@ -59,7 +83,11 @@ foreach ($daten as $row) {
 
 echo "</table>"; 
 echo "<tbody>"; 
- 
+
+/* Free statement and connection resources. */  
+sqlsrv_free_stmt( $stmt);  
+sqlsrv_close( $conn);  
+
 ?> <!-- Ende PHP-->
 </body> <!-- Ende HTML-Body-->
 </html> <!-- Ende HTML-->
